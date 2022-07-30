@@ -5,12 +5,13 @@ import (
 	"io/ioutil"
 	"net"
 	"os"
+	"time"
 
 	// "github.com/minio/minio-go/pkg/credentials"
+	"github.com/minio/madmin-go"
 	mclient "github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	minio "github.com/minio/minio/cmd"
-	"github.com/minio/minio/pkg/madmin"
 	"github.com/pkg/errors"
 )
 
@@ -45,6 +46,10 @@ func StartEmbedded() (string, func() error, error) {
 		Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
 		Secure: false,
 	})
+	if err != nil {
+		return "", nil, errors.Wrap(err, "while creating client")
+	}
+	time.Sleep(5 * time.Second)
 
 	err = mc.MakeBucket(context.Background(), "test", mclient.MakeBucketOptions{})
 	if err != nil {
